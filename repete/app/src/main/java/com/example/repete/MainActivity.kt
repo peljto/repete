@@ -1,5 +1,6 @@
 package com.example.repete
 
+import HomePage
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,22 +23,18 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting("Android")
                 }
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
+
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     RepeteTheme {
-        Greeting("Android")
+
     }
 }

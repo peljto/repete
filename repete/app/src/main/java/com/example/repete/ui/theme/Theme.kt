@@ -13,9 +13,11 @@ private val DarkColorPalette = darkColors(
 )
 
 private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    background = eggshell,
+   primary = lightGreen,
+    secondary = green,
+    surface = darkGreen,
+    onSurface = bittersweetShimmer
 
     /* Other default colors to override
     background = Color.White,
