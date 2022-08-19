@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">repete</string>
+    <string name="hrvatski">Hrvatski jezik</string>
+    <string name="engleski">Engleski jezik</string>
+    <string name="talijanski">Talijanski jezik</string>
+    <string name="latinski">Latinski jezik</string>
+    <string name="matematika">Matematika</string>
+    <string name="fizika">Fizika</string>
+    <string name="kemija">Kemija</string>
 </resources>

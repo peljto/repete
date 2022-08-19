@@ -2,7 +2,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.widget.TextView
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -10,7 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -22,25 +20,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
+import androidx.navigation.NavController
 import com.example.repete.R
-import com.example.repete.ui.Screen
 import com.example.repete.ui.theme.*
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun HomePage() {
+fun HomePage(navController : NavController) {
     Scaffold(scaffoldState = rememberScaffoldState(),
         backgroundColor = eggshell,
         floatingActionButtonPosition = FabPosition.Center,
         isFloatingActionButtonDocked = true,
         floatingActionButton = {
-            FloatingActionButton(onClick = { /*TODO*/ },
+            FloatingActionButton(onClick = { navController.navigate("form")},
                 backgroundColor = bittersweetShimmer,
                 elevation = FloatingActionButtonDefaults.elevation(2.dp, 3.dp),
             contentColor = Color.Black
@@ -95,17 +89,18 @@ fun InstructionCard() {
             ) {
                 Column() {
                     Text(
-                        text = "matisa"
+                        text = "matisa",
                     )
                     Text(
-                        text = "100kn/h"
+                        text = "OŠ SŠ"
                     )
+                    Text(text = "100kn")
                 }
                 Spacer(Modifier.weight(1f))
                 ContactButton(expanded = expanded, onClick = { expanded = !expanded})
             }
             if(expanded) {
-                Contact()
+                MoreInformation()
             }
             }
 
@@ -131,7 +126,7 @@ fun ContactButton(
 }
 
 @Composable
-fun Contact(){
+fun MoreInformation(){
     val context = LocalContext.current
 
     Column(
@@ -142,12 +137,14 @@ fun Contact(){
             end = 16.dp
         )
     ) {
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
             horizontalArrangement = Arrangement.End
         ) {
+
             Button(onClick = {
                 context.dial(phone = "0989569108")
             }, colors = ButtonDefaults.buttonColors(backgroundColor = lightGreen),
