@@ -28,8 +28,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_9
+        targetCompatibility JavaVersion.VERSION_1_9
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -76,5 +76,9 @@ dependencies {
     def nav_version = "2.5.1"
 
     implementation "androidx.navigation:navigation-compose:$nav_version"
+
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    // coroutine
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.1.1'
 
 }

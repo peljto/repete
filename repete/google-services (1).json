@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "42353257287",
+    "firebase_url": "https://repete-34786-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "repete-34786",
+    "storage_bucket": "repete-34786.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:42353257287:android:dd3793ed6055436d4efa62",
+        "android_client_info": {
+          "package_name": "com.example.repete"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "42353257287-mr5d47emvq7fdv68ume247a7obgtlseu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALm2oSSB_SzP-55wXB0rRzBjAUkJ4J7UE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "42353257287-mr5d47emvq7fdv68ume247a7obgtlseu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

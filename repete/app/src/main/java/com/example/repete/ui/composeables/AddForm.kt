@@ -1,40 +1,47 @@
 import android.annotation.SuppressLint
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.repete.ui.theme.bittersweetShimmer
-import com.example.repete.ui.theme.lightGreen
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.toSize
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
-import com.example.repete.R
+import androidx.navigation.compose.rememberNavController
+import com.example.repete.ui.composeables.viewmodel.FormUiState
+import com.example.repete.ui.composeables.viewmodel.FormViewModel
+import com.example.repete.ui.theme.RepeteTheme
 import com.example.repete.ui.theme.eggshell
 import com.example.repete.ui.theme.green
+import kotlinx.coroutines.launch
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @Composable
-fun Form(navController : NavController) {
+fun Form(navController : NavController, formViewModel: FormViewModel?) {
+
+    val formUiState = formViewModel?.formUiState ?: FormUiState()
+
+    val isFormsNotBlank = formUiState.subject.isNotBlank() &&
+            formUiState.typeOfEducation.isNotBlank()
+
+
+    val scope = rememberCoroutineScope()
+    val scaffoldState = rememberScaffoldState()
 
     Scaffold(
-        backgroundColor = eggshell
+        backgroundColor = eggshell,
+        scaffoldState = scaffoldState,
+        topBar = {
+            FormTopBar(navController = navController)
+        }
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -42,6 +49,15 @@ fun Form(navController : NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
 
             ) {
+            if(formUiState.oglasAddedStatus){
+                scope.launch {
+                    scaffoldState.snackbarHostState
+                        .showSnackbar("Added oglas successfully")
+                    formViewModel?.resetOglasAddedStatus()
+                    navController.navigate("home_page")
+                }
+            }
+
             Card(
                 backgroundColor = green,
                 elevation = 4.dp,
@@ -55,153 +71,69 @@ fun Form(navController : NavController) {
                         bottom = 100.dp
                     )
             ) {
-
-                Column( verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally) {
-                    SelectSubject()
-                    Spacer(modifier = Modifier.size(30.dp))
-                    Price()
-                    Spacer(modifier = Modifier.size(30.dp))
-                    School()
-                    Spacer(modifier = Modifier.size(30.dp))
-                    Contact()
-                    FloatingNextButton()
-                }
-
-
-            }
-        }
-
-
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun SelectSubject() {
-    val options = listOf(
-        "Hrvatski jezik",
-        "Engleski jezik",
-        "Talijanski jezik",
-        "Latinski jezik",
-        "Matematika",
-        "Fizika",
-        "Kemija",
-        "Povijest",
-        "Zemljopis"
-    )
-    var expanded by remember { mutableStateOf(false) }
-    var selectedOptionText by remember { mutableStateOf(options[0]) }
-
-    var lastSelectedOption by remember { mutableStateOf(options[0]) }
-    SideEffect {
-        if(lastSelectedOption!=options[0]){
-            lastSelectedOption = options[0]
-        }
-
-    }
-    
-
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = {
-            expanded = !expanded
-        }
-    ) {
-        TextField(
-            readOnly = true,
-            value = selectedOptionText,
-            onValueChange = {  },
-            label = { Text("subject") },
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(
-                    expanded = expanded
-                )
-            },
-            colors = TextFieldDefaults.outlinedTextFieldColors(),
-            modifier = Modifier.padding(top = 20.dp)
-        )
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = {
-                expanded = false
-            }
-        ) {
-            options.forEach { selectionOption ->
-                DropdownMenuItem(
-                    onClick = {
-                        selectedOptionText = selectionOption
-                        expanded = false
-                    }
-                ) {
-                    Text(text = selectionOption)
-
-                }
-
-            }
-        }
-    }
-}
-
-
-@Composable
-fun Price() {
-    var username by remember { mutableStateOf("") }
-
-    Row(){
-        TextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("cijena u kunama") },
-            singleLine = true,
-        )
-    }
-
-}
-
-@Composable
-fun School() {
-    val schoolList = arrayListOf("OŠ", "SŠ", "M")
-
-    Row(horizontalArrangement = Arrangement.spacedBy(50.dp)){
-        schoolList.forEach { option: String ->
-          //  Spacer(modifier = Modifier.size(16.dp))
-            Row {
-                val isChecked = remember { mutableStateOf(false) }
-                Checkbox(
-                    checked = isChecked.value,
-                    onCheckedChange = {
-                        isChecked.value = it
-                    },
-                    colors = CheckboxDefaults.colors(
-                        checkmarkColor = Color.Black,
-                        checkedColor = bittersweetShimmer,
+                Column() {
+                    OutlinedTextField(
+                        value = formUiState.subject,
+                        onValueChange = {
+                            formViewModel?.onSubjectChange((it))
+                        },
+                        label = {Text(text = "subject")},
+                        modifier = Modifier
+                            .padding(top = 20.dp, bottom = 8.dp, start = 8.dp, end = 8.dp)
+                            .fillMaxWidth()
                     )
-                )
-              //  Spacer(modifier = Modifier.size(16.dp))
-                Text(option)
+
+                    OutlinedTextField(
+                        value = formUiState.typeOfEducation,
+                        onValueChange = {
+                            formViewModel?.onTypeOfEducationChange((it))
+                        },
+                        label = {Text(text="type of education")},
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = formUiState.price,
+                        onValueChange = {
+                            formViewModel?.onPriceChange((it))
+                        },
+                        label = {Text(text="price in hrk")},
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = formUiState.contact,
+                        onValueChange = {
+                            formViewModel?.onContactChange((it))
+                        },
+                        label = {Text(text="phone number")},
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.size(60.dp))
+
+                    FloatingNextButton(formViewModel = formViewModel)
+
+                }
+                }
+
+
+
             }
         }
+
+
     }
 
-}
 
 @Composable
-fun Contact() {
-    var username by remember { mutableStateOf("") }
-
-    Column(){
-        TextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("unesite broj mobitela") },
-            singleLine = true,
-        )
-    }
-
-}
-@Composable
-fun FloatingNextButton() {
+fun FloatingNextButton( formViewModel: FormViewModel?) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -209,12 +141,43 @@ fun FloatingNextButton() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        FloatingActionButton(onClick = {}, backgroundColor = bittersweetShimmer) {
-            Icon(Icons.Filled.ArrowForward, contentDescription = "Edit")
+        FloatingActionButton(
+            onClick = {
+                      formViewModel?.addOglas()
+            }, backgroundColor = bittersweetShimmer) {
+            Icon(Icons.Filled.ArrowForward, contentDescription = null)
 
         }
 
     }
 }
 
+@Composable
+fun FormTopBar(navController: NavController) {
+    TopAppBar(
+        title = {
+            Text("Novi oglas")
+        },
+        navigationIcon = {
+            IconButton(onClick = {navController.navigate("home_page")}) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = null
+                )
+                
+            }
+        },
+        backgroundColor = bittersweetShimmer
+    ) 
+}
 
+
+@Preview
+@Composable
+fun PrevFormScreen() {
+    RepeteTheme() {
+        val navController = rememberNavController()
+        Form(navController = navController, formViewModel = null)
+        
+    }
+}
